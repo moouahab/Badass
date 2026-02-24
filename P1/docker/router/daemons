@@ -1,0 +1,22 @@
+zebra=yes
+bgpd=yes
+ospfd=yes
+isisd=yes
+
+# Désactivation des autres services
+staticd=no
+ripd=no
+ripngd=no
+ospf6d=no
+pimd=no
+ldpd=no
+nhrpd=no
+eigrpd=no
+babeld=no
+sharpd=no
+pbrd=no
+bfdd=no
+fabricd=no
+vrrpd=no
+
+vtysh_enable=yes
