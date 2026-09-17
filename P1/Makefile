@@ -13,7 +13,7 @@ DOCKER_ROUTER_DIR = docker/router
 
 # ===============================
 
-all: build
+all: build test
 
 build: build-host build-router
 
@@ -35,4 +35,7 @@ clean:
 
 re: clean build
 
-.PHONY: all build build-host build-router run-host run-router clean re
+test:
+	@./test.sh
+
+.PHONY: all build build-host build-router run-host run-router clean re test

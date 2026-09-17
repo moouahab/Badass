@@ -18,6 +18,7 @@ ip link del br0 2>/dev/null
 ip addr flush dev eth0 2>/dev/null
 ip addr flush dev eth1 2>/dev/null
 ip addr flush dev lo 2>/dev/null
+ip addr add 127.0.0.1/8 dev lo
 
 case "$ID" in
     2)

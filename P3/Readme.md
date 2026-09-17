@@ -1,215 +1,36 @@
-# 📡 Projet P3 – Architecture Réseau Multi-Branches (GNS3 + Docker)
+# P3 — BGP EVPN/VXLAN
 
-## 🎯 Objectif
+La topologie forme un petit fabric datacenter :
 
-Ce projet consiste à mettre en place une **architecture réseau multi-branches** en utilisant **GNS3 et Docker**, avec une configuration automatisée :
-
-* d’un **routeur central (gateway)**
-* de plusieurs **routeurs de branches**
-* de plusieurs **hôtes**
-* avec une **connectivité complète entre tous les réseaux**
-
-L’objectif est de simuler une infrastructure réseau réaliste et scalable.
-
----
-
-## 🧱 Architecture
-
-```
-                (Gateway)
-              _moouahab-1
-          ┌────────┼────────┐
-          │        │        │
-     Branch1   Branch2   Branch3
-   (_-2)      (_-3)      (_-4)
-      │          │          │
-   Host1      Host2      Host3
+```text
+                    _moouahab-1
+                  Route Reflector
+                     1.1.1.1
+                 /      |      \
+        _moouahab-2  _moouahab-3  _moouahab-4
+          VTEP .2      VTEP .3      VTEP .4
+             |            |            |
+          host-1        host-2        host-3
+         20.1.1.1      20.1.1.2      20.1.1.3
 ```
 
----
+## Fonctionnement
 
-## 🌐 Plan d’adressage
+- OSPF area 0 annonce les loopbacks `1.1.1.1/32` à `1.1.1.4/32` dans l'underlay.
+- iBGP AS 65000 transporte la famille `l2vpn evpn`.
+- `_moouahab-1` est le route reflector; les trois feuilles sont ses clients EVPN.
+- Chaque feuille est un VTEP et relie `eth1` au VXLAN VNI 10 via `br0`.
+- Les routes EVPN type 3 annoncent les VTEP; les routes type 2 annoncent les MAC des hôtes.
 
-| Équipement | Interface | Adresse IP      |
-| ---------- | --------- | --------------- |
-| Gateway    | eth0      | 10.0.1.1/24     |
-|            | eth1      | 10.0.2.1/24     |
-|            | eth2      | 10.0.3.1/24     |
-| Branche 1  | eth0      | 10.0.1.2/24     |
-|            | eth1      | 192.168.1.1/24  |
-| Branche 2  | eth0      | 10.0.2.2/24     |
-|            | eth1      | 192.168.2.1/24  |
-| Branche 3  | eth0      | 10.0.3.2/24     |
-|            | eth1      | 192.168.3.1/24  |
-| Hosts      | eth0      | 192.168.X.10/24 |
+## Automatisation
 
----
+Après avoir ouvert le projet portable et démarré ses nœuds :
 
-## ⚙️ Fonctionnalités
-
-* 🔁 Routage statique entre tous les réseaux
-* 🔄 Activation de l’IP forwarding
-* ⚡ Déploiement automatisé via scripts
-* 📦 Infrastructure conteneurisée (Docker)
-* 🔧 Architecture scalable (ajout de branches)
-
----
-
-## 🚀 Déploiement
-
-### 1. Lancer le projet GNS3
-
-```bash
-docker ps
+```sh
+make setup   # applique toute la configuration
+make test    # valide OSPF, BGP EVPN, VNI, type 2 et les pings
+make status  # affiche les preuves utiles pour la soutenance
+make reset   # remet les routeurs à zéro
 ```
 
----
-
-### 2. Configurer le gateway
-
-```bash
-make gateway
-```
-
----
-
-### 3. Configurer les branches
-
-```bash
-make branches
-```
-
-Chaque routeur de branche reçoit :
-
-* une IP backbone (`10.0.X.2`)
-* un réseau local (`192.168.X.1`)
-* une route par défaut vers le gateway
-
----
-
-### 4. Configurer les hosts
-
-```bash
-make hosts
-```
-
-Chaque host reçoit :
-
-* IP : `192.168.X.10`
-* Gateway : `192.168.X.1`
-
----
-
-### 5. Tester la connectivité
-
-```bash
-make test
-```
-
-Résultat attendu :
-
-* ✅ Host1 → Host2
-* ✅ Host1 → Host3
-
----
-
-## 🔍 Troubleshooting
-
-### ❌ "RTNETLINK: File exists"
-
-→ La route existe déjà (pas bloquant)
-
----
-
-### ❌ Problème de ping entre réseaux
-
-#### 1. Vérifier les routes du gateway
-
-```bash
-ip route
-```
-
-Doit contenir :
-
-```
-192.168.1.0/24 via 10.0.1.2
-192.168.2.0/24 via 10.0.2.2
-192.168.3.0/24 via 10.0.3.2
-```
-
----
-
-#### 2. Vérifier l’IP forwarding
-
-```bash
-cat /proc/sys/net/ipv4/ip_forward
-```
-
-Doit être :
-
-```
-1
-```
-
----
-
-#### 3. Vérifier la connectivité réseau (GNS3)
-
-```bash
-ping 10.0.X.1
-```
-
-Si ça échoue :
-
-👉 ce n’est PAS un problème de routage
-👉 c’est un problème de **liaison (Layer 2)**
-
-✔ Vérifier :
-
-* les câbles dans GNS3
-* les interfaces (eth0 / eth1 / eth2)
-
----
-
-## 🧠 Concepts clés
-
-* Routage statique
-* Différence Layer 2 / Layer 3
-* Isolation réseau Docker
-* Routage multi-interfaces
-* Automatisation d’infrastructure
-
----
-
-## 📈 Scalabilité
-
-Le script :
-
-```bash
-set_branch.sh
-```
-
-permet :
-
-* d’ajouter N branches
-* d’automatiser l’adressage IP
-* de réutiliser l’architecture
-
----
-
-## 🏁 Conclusion
-
-Ce projet démontre :
-
-* une bonne maîtrise des réseaux
-* une capacité de debug réelle (niveau terrain)
-* des compétences en automatisation
-* une approche proche des environnements SOC
-
----
-
-## 👤 Auteur
-
-Mohamed Ouahab
-Cybersécurité / DevSecOps / SOC
-
+Depuis la racine du dépôt, `make p3` enchaîne la mise en place et tous les tests.
