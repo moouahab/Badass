@@ -1,6 +1,6 @@
 SHELL := /bin/sh
 
-.PHONY: help build p1 p2-static p2-multicast p3 test-p1 test-p2 test-p3 export check start-p1 start-p2 start-p3 stop-p1 stop-p2 stop-p3
+.PHONY: help build p1 p2-static p2-multicast p3 test-p1 test-p2 test-p3 check start-p1 start-p2 start-p3 stop-p1 stop-p2 stop-p3
 
 help:
 	@printf '%s\n' \
@@ -11,7 +11,6 @@ help:
 	  'make p3             configure et teste OSPF/BGP EVPN' \
 	  'make start-p2       ouvre et démarre P2 via l API GNS3' \
 	  'make stop-p2        arrête et ferme P2 via l API GNS3' \
-	  'make export         génère les .gns3project portables' \
 	  'make check          vérifie la syntaxe de toute l’automatisation'
 
 build:
@@ -41,7 +40,5 @@ stop-p2:
 	@./scripts/gns3-control.sh stop gns3-p2
 stop-p3:
 	@./scripts/gns3-control.sh stop gns3-P3-1-1
-export:
-	@./scripts/export-projects.sh
 check:
 	@./scripts/check.sh

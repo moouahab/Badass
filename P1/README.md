@@ -64,7 +64,7 @@ make -C P1 clean        # supprime les images locales
 make -C P1 re           # supprime puis reconstruit
 ```
 
-Après une reconstruction, redémarrer les nœuds GNS3 pour utiliser l'image à jour. `make export` génère `P1/P1.gns3project` à importer dans GNS3.
+Après une reconstruction, redémarrer les nœuds GNS3 pour utiliser l'image à jour. Le fichier `P1/P1.gns3project` peut être importé directement dans GNS3.
 
 ## Dépannage
 

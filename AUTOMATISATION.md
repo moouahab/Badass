@@ -4,7 +4,7 @@
 
 1. Démarrer Docker Desktop et GNS3.
 2. Construire les images avec `make build`.
-3. Générer les projets portables avec `make export`, puis ouvrir une première fois dans GNS3 le projet de la partie testée afin de l'importer.
+3. Importer dans GNS3 le fichier `.gns3project` de la partie testée.
 4. Les lancements suivants sont automatisés avec `make start-p1`, `make start-p2` ou `make start-p3`. Garder un seul projet ouvert à la fois.
 
 ## Commandes

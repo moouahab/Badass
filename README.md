@@ -43,10 +43,7 @@ Ouvrir et démarrer **un seul projet à la fois**. Plusieurs projets contenant d
 # Construire et vérifier les images
 make p1
 
-# Générer les projets portables si nécessaire
-make export
-
-# Ouvrir P2 dans GNS3 et démarrer ses nœuds
+# Importer le fichier P2/P2.gns3project, puis démarrer ses nœuds
 make p2-static
 # ou : make p2-multicast
 
@@ -69,7 +66,6 @@ make p3
 | `make test-p2` / `make test-p3` | Relance seulement les tests |
 | `make start-p1`, `start-p2`, `start-p3` | Ouvre le projet et démarre ses nœuds |
 | `make stop-p1`, `stop-p2`, `stop-p3` | Arrête les nœuds et ferme le projet |
-| `make export` | Reconstruit les projets portables depuis les archives |
 | `make check` | Vérifie la syntaxe des scripts shell |
 
 Le contrôle GNS3 utilise `http://127.0.0.1:3080/v2` par défaut. Pour un serveur différent :
@@ -84,7 +80,7 @@ GNS3_URL=http://serveur:3080/v2 make start-p3
 P1/          images Docker et validation de FRR
 P2/          VXLAN statique et multicast
 P3/          fabric OSPF + BGP EVPN + VXLAN
-scripts/     validation, export et pilotage de GNS3
+scripts/     validation et pilotage de GNS3
 sujet/       sujet du projet
 Makefile     point d'entrée général
 ```
