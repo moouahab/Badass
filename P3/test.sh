@@ -11,7 +11,7 @@ h2=$(container_for host_moouahab-2)
 h3=$(container_for host_moouahab-3)
 wait_for "3 voisins OSPF sur le RR" sh -c "docker exec '$rr' vtysh -c 'show ip ospf neighbor' | grep -c Full | grep -q '^3$'"
 for leaf in "$l2" "$l3" "$l4"; do
-    wait_for "session BGP EVPN de $leaf" sh -c "docker exec '$leaf' vtysh -c 'show bgp l2vpn evpn neighbors 1.1.1.1' | grep -q 'BGP state = Established'"
+    wait_for "session BGP EVPN de $leaf" sh -c "docker exec '$leaf' vtysh -c 'show bgp l2vpn evpn summary' | awk '\$1 == \"1.1.1.1\" && \$10 ~ /^[0-9]+$/ { found=1 } END { exit !found }'"
     docker exec "$leaf" ip -d link show vxlan10 | grep -q 'vxlan id 10' || die "$leaf: VNI 10 absent"
 done
 docker exec "$h1" ping -c 3 -W 2 20.1.1.2 >/dev/null || die "H1 -> H2 inaccessible via EVPN"
